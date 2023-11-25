@@ -31,6 +31,9 @@ const router = require("./router/Router.js")
 
 app.use(router)
 
+
+
+
 app.listen(port, () => {
     console.log(`rodando na porta ${port}`);
 })
