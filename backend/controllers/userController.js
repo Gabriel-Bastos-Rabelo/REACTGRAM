@@ -48,7 +48,7 @@ const register = async(req, res) => {
         return;
     }
 
-    console.log(newUser);
+    
 
     res.status(201).json({
         _id: newUser._id,
@@ -63,7 +63,7 @@ const register = async(req, res) => {
 const login = async (req, res) => {
     
     const {email, password} = req.body;
-    console.log(email)
+    
 
     const user = await User.findOne({email: email})
 
@@ -72,10 +72,9 @@ const login = async (req, res) => {
         return;
     }
 
-    console.log(user.password)
-    console.log(password)
+    
     if(!(await bcrypt.compare(password, user.password))){
-        console.log("chegou aqui");
+    
         res.status(422).json({error: ["Senha incorreta!"]})
         return;
     }
@@ -134,11 +133,22 @@ const login = async (req, res) => {
     res.status(200).json(user);
  }
 
+ const getUserByid = async(req, res) => {
+    const {id} = req.params;
+    try{
+        const user = await User.findById(new mongoose.Types.ObjectId(id)).select("-password");
+        return res.status(200).json(user);
+    }catch(error){
+        res.status(404).json({errors: ["Usuário não encontrado!"]});
+    }
+ }
+
 
 module.exports = {
     register,
     login,
     getCurrentUser,
-    update
+    update,
+    getUserByid
     
 };
