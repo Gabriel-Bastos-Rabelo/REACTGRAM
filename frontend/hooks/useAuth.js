@@ -12,7 +12,6 @@ export const useAuth = () => {
 
     useEffect(() => {
 
-        console.log(user)
         if(user && !('errors' in user)){
             setAuth(true);
         }
