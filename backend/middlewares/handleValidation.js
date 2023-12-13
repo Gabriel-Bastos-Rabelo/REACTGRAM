@@ -12,6 +12,7 @@ const validate = (req, res, next) => {
 
     errors.array().map((err) => extractedErros.push(err.msg));
 
+    console.log("chegou um erro");
     return res.status(422).json({
         errors: extractedErros,
 

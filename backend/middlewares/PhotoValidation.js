@@ -10,7 +10,7 @@ const insertPhotoValidation = () => {
         .withMessage("O título é obrigatório")
         .isLength({min: 3})
         .withMessage("O título precisa ter no mínimo 3 letras")
-        ,body("image").custom((value, {req}) => {
+        ,body("image").optional().custom((value, {req}) => {
             if(!req.file){
                 throw new Error("A imagem é obrigatória");
             }

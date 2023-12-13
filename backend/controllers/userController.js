@@ -64,8 +64,10 @@ const login = async (req, res) => {
     
     const {email, password} = req.body;
     
-
+    
     const user = await User.findOne({email: email})
+
+    
 
     if(!user){
         res.status(404).json({errors: ["Usuário não encontrado!"]})
@@ -100,6 +102,11 @@ const login = async (req, res) => {
     const {name, password, bio} = req.body;
 
     let profileImage = null;
+
+    if(name.length < 3){
+        res.status(422).json({errors: ["O nome precisa ter no mínimo 3 caracteres!"]})
+        return
+    }
 
     if(req.file){
         profileImage = req.file.filename;

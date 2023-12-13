@@ -46,6 +46,7 @@ const loginValidation = () => {
 }
 
 const userUpdateValidation = () => {
+
     return [
         body("name")
         .optional()

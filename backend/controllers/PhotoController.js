@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 
 const insertPhoto = async (req, res) => {
   const { title } = req.body;
+
+  console.log(req.file)
   const image = req.file.filename;
 
   console.log(req.body);
