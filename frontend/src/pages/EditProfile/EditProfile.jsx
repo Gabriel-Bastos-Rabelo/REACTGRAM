@@ -69,7 +69,9 @@ function EditProfile() {
         Object.keys(userData).forEach((key) => {
             formData.append(key, userData[key]);
         });
-    
+        
+
+        
         await dispatch(updateProfile(formData));
     
 

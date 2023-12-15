@@ -110,7 +110,7 @@ const updatePhoto = async(req, res) => {
 
     //check if photo belongs to user
     if(!(photo.userId.equals(reqUser._id))){
-      res.status(422).json({erros: ["Houve um erro, tente novamente mais tarde"]});
+      res.status(422).json({errors: ["Houve um erro, tente novamente mais tarde"]});
       return;
     }
 

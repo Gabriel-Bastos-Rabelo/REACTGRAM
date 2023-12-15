@@ -5,12 +5,13 @@ import {api, requestConfig} from "../utils/config"
 const publishPhoto = async(data, token) => {
 
    
-    const config = requestConfig("POST", data, token);
+    const config = requestConfig("POST", data, token, true);
     
+    console.log(config)
 
     try{
-        const res = await fetch(api + "/photo", config).then((res) => res.json()).catch((error) => error);
-
+        const res = await fetch(api + "/photo", config).then((res) => res.json()).catch((error) => console.log(error));
+        
         return res;
 
     }catch(error){
@@ -19,7 +20,37 @@ const publishPhoto = async(data, token) => {
 
 
 }
-const photoService = {publishPhoto}
+
+//get user photos
+
+const getUserPhotos = async (id, token) => {
+    const config = requestConfig("GET", null, token);
+
+    try{
+        const res = await fetch(api + `/photo/user/${id}`, config).then((res) => res.json()).catch((error) => error);
+
+        return res;
+
+
+    }catch(error){
+        console.log(error)
+    }
+}
+
+//delete photo
+const deletePhoto = async(id, token) => {
+    const config = requestConfig("DELETE", null, token);
+
+    try{
+        const res = await fetch(api + `/photo/${id}`, config).then((res) => res.json()).catch((error) => error);
+        return res;
+
+    }catch(error){
+
+        console.log(res)
+    }
+}
+const photoService = {publishPhoto, getUserPhotos, deletePhoto}
 
 export default photoService;
 

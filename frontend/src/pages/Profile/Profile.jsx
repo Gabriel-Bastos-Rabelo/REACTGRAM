@@ -19,7 +19,8 @@ import {useParams} from "react-router-dom"
 //redux
 import { getUserDetails } from '../../slices/userSlice'
 
-import { publishPhoto, resetMessage } from '../../slices/photoSlice';
+import { publishPhoto, resetMessage, getUserPhotos, deletePhoto } from '../../slices/photoSlice';
+
 
 
 
@@ -34,7 +35,7 @@ function Profile() {
 
     const {user: userAuth} = useSelector((state) => state.auth);
 
-    const {photo, loading: loadingPhoto, message: messagePhoto, error: errorPhoto} = useSelector((state) => state.photo);
+    const {photos, loading: loadingPhoto, message: messagePhoto, error: errorPhoto} = useSelector((state) => state.photo);
 
     const [title, setTitle] = useState();
     const [image, setImage] = useState();
@@ -62,15 +63,16 @@ function Profile() {
             image
         }
 
-        console.log(photoData)
-
+        
         const formData = new FormData();
 
-        Object.keys(photoData).forEach((key) => {
-            formData.append(key, photoData[key]);
-        });
-    
-        await dispatch(publishPhoto(formData));
+        const photoFormData = Object.keys(photoData).forEach((key) =>
+            formData.append(key, photoData[key])
+        );
+
+        formData.append("photo", photoFormData);
+
+        dispatch(publishPhoto(formData));
     
 
         setTitle("");
@@ -84,11 +86,24 @@ function Profile() {
     }
 
 
+    const deleteHandle = (id) => {
+        console.log("delete handle");
+        dispatch(deletePhoto(id));
+
+
+        setTimeout(() => {
+            dispatch(resetMessage());
+        }, 2000);
+
+    }
+
+
     //user data
 
     useEffect(() => {
 
         dispatch(getUserDetails(id));
+        dispatch(getUserPhotos(id));
     
     }, [dispatch, id])
 
@@ -99,7 +114,7 @@ function Profile() {
 
    
 
-
+    console.log(photos)
   return (
     <div id = "profile">
         <div className="profile-header">
@@ -131,9 +146,41 @@ function Profile() {
 
                 {!loading && <input type="submit" value="Postar" />}
                 {loading && <input type = "submit" disabled value = "Aguarde.."></input>}
+
+                {errorPhoto && <Message message={errorPhoto} type={"error"}/>}
+                {messagePhoto && <Message message={messagePhoto} type={"success"}/>}
             </form>
             
         </div></>}
+
+
+        {photos && (
+            <div className="user-photo">
+                <h2>Fotos publicadas:</h2>
+                <div className="photos-container">
+                    {photos.map((photo) => {
+                        return (
+                        <div className="photo" key={photo._id}>
+
+                            {photo.image && (<img src = {`${uploads}/photos/${photo.image}`} alt={photo.title}></img>)}
+
+                            {id == userAuth._id ? (<div className='actions'> 
+                            <Link to = {`photos/${photo._id}`}><BsFillEyeFill/></Link>
+                            <BsPencilFill/>
+                            <BsXLg onClick={() => deleteHandle(photo._id)}/>
+                            
+                            </div>) : (<Link className='btn' to = {`photos/${photo._id}`}></Link>)}
+                        </div>
+
+                        )
+                    })}
+                </div>
+            </div>
+        )}
+
+        {photos.length == 0 && <p>Ainda não há fotos publicadas</p>}
+
+        
 
        
     </div>
