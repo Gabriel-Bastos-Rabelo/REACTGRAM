@@ -65,6 +65,34 @@ export const deletePhoto = createAsyncThunk("photo/delete", async(id, thunkAPI) 
     return data;
 })
 
+//update user photo
+export const updatePhoto = createAsyncThunk("photo/update", async(photoData, thunkAPI) => {
+
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.updatePhoto(photoData.id, {title: photoData.title}, token);
+
+    if(data.errors){
+        return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+
+    return data;
+})
+
+//get photo
+export const getPhoto = createAsyncThunk("photo/getPhoto", async(id, thunkAPI) => {
+
+    const token = thunkAPI.getState().auth.user.token
+
+    const data = await photoService.getPhoto(id, token);
+
+    if(data.errors){
+        return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+
+    return data;
+})
+
 export const photoSlice = createSlice({
     name: "photo",
     initialState,
@@ -122,6 +150,40 @@ export const photoSlice = createSlice({
             state.success = true;
             state.photo = {};
             
+        }).addCase(updatePhoto.pending, (state) => {
+            state.loading = true;
+            state.error = false;
+        }).addCase(updatePhoto.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = false;
+            state.success = true;
+
+            state.photos.map((photo) => {
+                if(photo._id == action.payload.photo._id){
+                    return (photo.title = action.payload.photo.title);
+                }
+
+                return photo;
+            })
+
+            state.message = action.payload.message;
+        
+        }).addCase(updatePhoto.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = true;
+            state.photo = {};
+            
+        }).addCase(getPhoto.pending, (state) => {
+            state.loading = true;
+            state.error = false;
+        }).addCase(getPhoto.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = false;
+            state.success = true;
+            
+            state.photo = action.payload;
+
         })
     }
 })

@@ -21,6 +21,7 @@ import EditProfile from './pages/EditProfile/EditProfile'
 //hooks
 import { useAuth } from '../hooks/useAuth'
 import Profile from './pages/Profile/Profile'
+import Photo from './pages/Photo/Photo'
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
           <Route path = "/register" element={!auth ? <Register/> : <Navigate to = "/"/>}></Route>
           <Route path = "/profile" element={auth ? <EditProfile/> : <Navigate to = "/"/>}></Route>
           <Route path = "/users/:id" element={auth ? <Profile/> : <Navigate to = "/"/>}></Route>
+          <Route path = "/photos/:id" element={auth ? <Photo/> : <Navigate to = "/"/>}></Route>
         </Routes>
 
       </div>

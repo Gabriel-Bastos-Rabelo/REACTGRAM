@@ -16,14 +16,14 @@ const insertPhoto = async (req, res) => {
 
   const user = await User.findById(reqUser._id);
 
-  console.log(user.name);
+  console.log(user);
 
   // Create photo
   const newPhoto = await Photo.create({
     image,
     title,
     userId: user._id,
-    userName: user.name,
+    username: user.name,
   });
 
   // If user was photo sucessfully, return data
@@ -192,4 +192,19 @@ const searchPhoto = async(req, res) => {
 }
 
 
-module.exports = { insertPhoto, deletePhoto, getAllPhotos, getUserPhotos, updatePhoto, likePhoto, commentPhoto, searchPhoto};
+const getPhotoById = async(req, res) => {
+  const {id} = req.params;
+  const photo = await Photo.findById(id);
+
+
+  if(!photo){
+    res.status(404).json({errors: ["Foto não encontrada"]});
+    return;
+  }
+
+  return res.status(200).json(photo);
+
+}
+
+
+module.exports = { insertPhoto, deletePhoto, getAllPhotos, getUserPhotos, updatePhoto, likePhoto, commentPhoto, searchPhoto, getPhotoById};
