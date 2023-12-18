@@ -3,6 +3,7 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 import photoService from "../services/photoService"
 
 
+
 const initialState = {
     photos: [],
     photo: {},
@@ -89,6 +90,58 @@ export const getPhoto = createAsyncThunk("photo/getPhoto", async(id, thunkAPI) =
     if(data.errors){
         return thunkAPI.rejectWithValue(data.errors[0]);
     }
+
+    return data;
+})
+
+
+//like photo
+export const like = createAsyncThunk("photo/like", async(id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.like(id, token);
+
+    if(data.errors){
+        return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+
+    return data;
+})
+
+//comment photo
+export const comment = createAsyncThunk("photo/comment", async(commentData, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.comment({comment: commentData.comment}, commentData.id, token);
+
+    if(data.errors){
+        return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+
+    return data;
+})
+
+
+export const getPhotos = createAsyncThunk("/photo/getAll", async(_, thunkAPI) => {
+    
+    const token = thunkAPI.getState().auth.user.token;
+    
+    const data = await photoService.getPhotos(token);
+
+    if(data.errors){
+        return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+
+    return data;
+})
+
+
+export const searchPhotos = createAsyncThunk("/photo/search", async(query, thunkAPI) => {
+
+    const token = thunkAPI.getState().auth.user.token;
+    
+    const data = await photoService.searchPhoto(query, token);
+
 
     return data;
 })
@@ -183,7 +236,88 @@ export const photoSlice = createSlice({
             state.success = true;
             
             state.photo = action.payload;
+            
 
+        }).addCase(like.pending, (state) => {
+            state.loading = true;
+            state.error = false;
+        }).addCase(like.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = false;
+            state.success = true;
+
+            
+            if(state.photo.likes){
+
+                state.photo.likes.push(action.payload.userId);
+            }
+
+            
+            state.photos.map((photo) => {
+                if(photo._id == action.payload.photoId){
+                    return photo.likes.push(action.payload.userId)
+                }
+
+                return photo;
+            })
+
+           
+            state.message = action.payload.message;
+        
+        }).addCase(like.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = true;
+            
+            
+        }).addCase(comment.pending, (state) => {
+            state.loading = true;
+            state.error = false;
+        }).addCase(comment.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = false;
+            state.success = true;
+
+            
+            if(state.photo.comments){
+                state.photo.comments.push(action.payload.userComment);
+                console.log(state.photo)
+            }
+
+            state.message = action.payload.message;
+        
+        }).addCase(comment.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = true;
+            
+            
+        }).addCase(getPhotos.pending, (state) => {
+            state.loading = true;
+            state.error = false;
+        }).addCase(getPhotos.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = false;
+            state.success = true;
+            state.photos = action.payload;
+            state.message = action.payload.message;
+        
+        }).addCase(getPhotos.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = true;
+            
+            
+        }).addCase(searchPhotos.pending, (state) => {
+            state.loading = true;
+            state.error = false;
+        }).addCase(searchPhotos.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = false;
+            state.success = true;
+            state.photos = action.payload;
+            state.message = action.payload.message;
+        
         })
     }
 })

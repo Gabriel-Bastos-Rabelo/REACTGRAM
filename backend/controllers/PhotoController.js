@@ -7,16 +7,16 @@ const mongoose = require("mongoose");
 const insertPhoto = async (req, res) => {
   const { title } = req.body;
 
-  console.log(req.file)
+  
   const image = req.file.filename;
 
-  console.log(req.body);
+  
 
   const reqUser = req.user;
 
   const user = await User.findById(reqUser._id);
 
-  console.log(user);
+  
 
   // Create photo
   const newPhoto = await Photo.create({
@@ -40,7 +40,7 @@ const insertPhoto = async (req, res) => {
 
 const deletePhoto = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
+  
 
   try {
     const photo = await Photo.findById(new mongoose.Types.ObjectId(id));
@@ -133,6 +133,8 @@ const likePhoto = async(req, res) => {
 
   const photo = await Photo.findById(id);
 
+
+
   if(!photo){
     res.status(404).json({errors: ["Houve um erro, tente novamente mais tarde"]});
     return;
@@ -166,10 +168,12 @@ const commentPhoto = async(req, res) => {
     return;
   }
 
+
+  
   const userComment = {
     comment,
     userName: user.name,
-    userImage: user.image,
+    userImage: user.profileImage,
     userId: user._id
   }
 
@@ -183,6 +187,8 @@ const commentPhoto = async(req, res) => {
 }
 
 const searchPhoto = async(req, res) => {
+
+  console.log("chegou aqui")
   const {q} = req.query;
 
   const photos = await Photo.find({title: new RegExp(q, "i")}).exec();
