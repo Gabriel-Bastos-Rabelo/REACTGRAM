@@ -30,10 +30,9 @@ function Navbar() {
     const handleQuery = (e) => {
         e.preventDefault();
         
-        if(query){
+        if (query) {
             return navigate(`/search?q=${query}`);
         }
-
     }
 
 

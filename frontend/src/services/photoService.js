@@ -123,7 +123,7 @@ const getPhotos = async(token) => {
     }
 }
 
-const searchPhoto = async(query, token) => {
+const searchPhotos = async (query, token) => {
     const config = requestConfig("GET", null, token);
 
     try{
@@ -134,10 +134,11 @@ const searchPhoto = async(query, token) => {
     }catch(error){
         console.log(error)
     }
-}
+};
+  
 
 
-const photoService = {publishPhoto, getUserPhotos, deletePhoto, updatePhoto, getPhoto, like, comment, getPhotos, searchPhoto}
+const photoService = {publishPhoto, getUserPhotos, deletePhoto, updatePhoto, getPhoto, like, comment, getPhotos, searchPhotos}
 
 export default photoService;
 

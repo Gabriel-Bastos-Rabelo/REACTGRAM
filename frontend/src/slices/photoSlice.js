@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 
 import photoService from "../services/photoService"
+import { BsDatabaseAdd } from "react-icons/bs";
 
 
 
@@ -125,6 +126,7 @@ export const comment = createAsyncThunk("photo/comment", async(commentData, thun
 export const getPhotos = createAsyncThunk("/photo/getAll", async(_, thunkAPI) => {
     
     const token = thunkAPI.getState().auth.user.token;
+    console.log(token)
     
     const data = await photoService.getPhotos(token);
 
@@ -136,15 +138,19 @@ export const getPhotos = createAsyncThunk("/photo/getAll", async(_, thunkAPI) =>
 })
 
 
-export const searchPhotos = createAsyncThunk("/photo/search", async(query, thunkAPI) => {
+export const searchPhotos = createAsyncThunk(
+    "photo/search",
+    async(query, thunkAPI) => {
+        const token = thunkAPI.getState().auth.user.token;
+        const data = await photoService.searchPhotos(query, token);
+        
+        if(data.errors){
+            return thunkAPI.rejectWithValue(data.errors[0]);
+        }
 
-    const token = thunkAPI.getState().auth.user.token;
-    
-    const data = await photoService.searchPhoto(query, token);
-
-
-    return data;
-})
+        return data;
+    }
+  );
 
 export const photoSlice = createSlice({
     name: "photo",
@@ -318,6 +324,12 @@ export const photoSlice = createSlice({
             state.photos = action.payload;
             state.message = action.payload.message;
         
+        }).addCase(searchPhotos.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = true;
+            
+            
         })
     }
 })

@@ -14,6 +14,7 @@ const { imageUpload } = require("../middlewares/imageUpload");
 
 //Routes
 router.post("/", authGuard, imageUpload.single("image"), insertPhotoValidation(), validate, insertPhoto);
+router.get("/search", authGuard, searchPhoto);
 router.delete("/:id", authGuard, deletePhoto);
 router.get("/:id", getPhotoById);
 router.get("/", authGuard, getAllPhotos);
@@ -21,5 +22,6 @@ router.get("/user/:id", authGuard, getUserPhotos);
 router.put("/:id", authGuard, photoUpdateValidation(), validate, updatePhoto);
 router.put("/like/:id", authGuard, likePhoto);
 router.put("/comment/:id", authGuard, photoCommentValidation(), validate, commentPhoto);
-router.get("/search", authGuard, searchPhoto);
+
+
 module.exports = router;

@@ -188,13 +188,14 @@ const commentPhoto = async(req, res) => {
 
 const searchPhoto = async(req, res) => {
 
-  console.log("chegou aqui")
+  
   const {q} = req.query;
 
   const photos = await Photo.find({title: new RegExp(q, "i")}).exec();
 
   res.status(200).json(photos);
   return;
+
 }
 
 
